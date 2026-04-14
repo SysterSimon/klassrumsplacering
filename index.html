@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simons placeringsgenerator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <h1>Simons placeringsgenerator</h1>
+        <p class="subtitle">Offlineverktyg för elevlista, regler och visuell placering.</p>
+      </header>
+
+      <section class="panel" aria-labelledby="student-list-title">
+        <h2 id="student-list-title">1) Standardlista med elevnamn</h2>
+        <p class="mode-info">Läge: Redigera standardlista</p>
+        <form id="add-student-form" class="inline-form">
+          <label for="new-student-name">Nytt elevnamn</label>
+          <input id="new-student-name" name="name" type="text" required maxlength="80" />
+          <button type="submit">Lägg till elev</button>
+        </form>
+        <ul id="student-list" class="list"></ul>
+        <div class="panel-actions">
+          <button id="save-students-btn" type="button">Spara standardlista</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="rules-title">
+        <h2 id="rules-title">2) Regler och platsbegränsningar</h2>
+        <p class="mode-info">Läge: Redigera regler</p>
+
+        <form id="add-rule-form" class="inline-form">
+          <label for="rule-student-a">Elev A</label>
+          <select id="rule-student-a" required></select>
+          <label for="rule-student-b">Elev B</label>
+          <select id="rule-student-b" required></select>
+          <button type="submit">Lägg till sidregel</button>
+        </form>
+        <ul id="rules-list" class="list"></ul>
+
+        <hr />
+
+        <form id="set-constraint-form" class="inline-form">
+          <label for="constraint-student">Elev</label>
+          <select id="constraint-student" required></select>
+          <label for="constraint-seats">Tillåtna platsnummer</label>
+          <select id="constraint-seats" multiple size="6" required></select>
+          <button type="submit">Spara platsbegränsning</button>
+        </form>
+
+        <ul id="constraints-list" class="list"></ul>
+
+        <div class="panel-actions">
+          <button id="save-rules-btn" type="button">Spara regler och platsbegränsningar</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="classroom-title">
+        <h2 id="classroom-title">3) Klassrum och aktuell placering</h2>
+        <p class="mode-info">Läge: Visa/hantera aktuell placering</p>
+
+        <div id="classroom-status" class="status" aria-live="polite"></div>
+
+        <div class="classroom-layout" aria-label="Klassrumslayout">
+          <div class="teacher">[ LÄRARE ]</div>
+
+          <div class="blocks-row">
+            <section class="seat-section" id="section-left">
+              <h3>Vänster block (01-09)</h3>
+              <div class="section-grid section-grid-3" id="left-block-grid"></div>
+            </section>
+
+            <section class="seat-section" id="section-middle">
+              <h3>Mittenblock (10-15)</h3>
+              <div class="section-grid section-grid-2" id="middle-block-grid"></div>
+            </section>
+
+            <section class="seat-section" id="section-right">
+              <h3>Höger block (16-24)</h3>
+              <div class="section-grid section-grid-3" id="right-block-grid"></div>
+            </section>
+          </div>
+
+          <section class="seat-section back-row">
+            <h3>Bakre rad (25-28)</h3>
+            <div class="section-grid section-grid-4" id="back-row-grid"></div>
+          </section>
+        </div>
+
+        <div class="panel-actions">
+          <button id="shuffle-btn" type="button">Starta slumpning</button>
+          <button id="clear-placement-btn" type="button">Rensa aktuell placering</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
