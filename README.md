@@ -1,29 +1,33 @@
-# Klassrumsplacering (offline, lokal)
+# Simons placeringsgenerator
 
-En liten lokal webbapp (ingen backend) för att:
+Liten, helt offline-baserad lokal webbapp för klassrumsplacering.
 
-- redigera och spara en standardlista med elever,
-- redigera och spara regler mellan elever,
-- slumpa en aktuell placering i en visuell klassrumslayout,
-- rensa aktuell placering utan att påverka sparad data.
+## Vad som finns i versionen
+
+- Standardlista med elever (lägg till, ta bort, spara lokalt).
+- Sidregler mellan elever (motsatta sidor).
+- Platsbegränsningar per elev via explicita platsnummer.
+- Visuell klassrumslayout enligt given 28-plats-skiss.
+- Väntesekvens vid slumpning: 3 sek nedräkning + 2 sek laddningsindikator.
+
+## Lokal lagring
+
+- `klassrum.standardlista.v1` (elevlista)
+- `klassrum.regler.v1` (sidregler)
+- `klassrum.platsbegransningar.v1` (platsbegränsningar)
+
+Aktuell placering sparas inte permanent.
+
+## Zonlogik för sidregel
+
+- vänster zon: 01-09
+- mittzon: 10-15
+- höger zon: 16-24
+- bakzon: 25-28
+
+Regeln "motsatta sidor" använder endast vänster ↔ höger.
+Mittzon och bakzon räknas som separata zoner (inte motsatta sidor).
 
 ## Kör lokalt
 
 Öppna `index.html` i en webbläsare.
-
-## Lagring
-
-- Standardlista sparas i `localStorage` med nyckel `klassrum.standardlista.v1`.
-- Regler sparas i `localStorage` med nyckel `klassrum.regler.v1`.
-- Aktuell placering sparas inte permanent.
-
-## Viktig avgränsning i version 1
-
-`classroom-layout.js` innehåller just nu en **placeholder-layout**.
-När den faktiska skissen finns måste filen uppdateras så att:
-
-1. platskoordinater (`row`, `col`) motsvarar verklig skiss,
-2. varje plats har korrekt zon/sida,
-3. `oppositeSides` matchar skissens tydliga sidindelning.
-
-Regeltypen i version 1 är enbart: två elever ska placeras i motsatta zoner.
