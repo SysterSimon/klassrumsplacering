@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Klassrumsplacering (offline)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <h1>Klassrumsplacering</h1>
+        <p class="subtitle">Helt offline. Tydligt separerad elevlista, regler och aktuell placering.</p>
+      </header>
+
+      <section class="panel panel-list" aria-labelledby="student-list-title">
+        <h2 id="student-list-title">1) Standardlista med elevnamn (sparad grunddata)</h2>
+        <p class="mode-info">Läge: Redigera standardlista</p>
+
+        <form id="add-student-form" class="inline-form">
+          <label for="new-student-name">Nytt elevnamn</label>
+          <input id="new-student-name" name="name" type="text" required maxlength="80" />
+          <button type="submit">Lägg till elev</button>
+        </form>
+
+        <ul id="student-list" class="list"></ul>
+
+        <div class="panel-actions">
+          <button id="save-students-btn" type="button">Spara standardlista</button>
+        </div>
+      </section>
+
+      <section class="panel panel-rules" aria-labelledby="rules-title">
+        <h2 id="rules-title">2) Placeringsregler (separat från elevlistan)</h2>
+        <p class="mode-info">Läge: Redigera regler</p>
+
+        <form id="add-rule-form" class="inline-form">
+          <label for="rule-student-a">Elev A</label>
+          <select id="rule-student-a" required></select>
+
+          <label for="rule-student-b">Elev B</label>
+          <select id="rule-student-b" required></select>
+
+          <button type="submit">Lägg till placeringsregel</button>
+        </form>
+
+        <p class="hint">Regeltyp i version 1: två elever ska sitta på motsatta definierade sidor/zoner.</p>
+        <ul id="rules-list" class="list"></ul>
+
+        <div class="panel-actions">
+          <button id="save-rules-btn" type="button">Spara regler</button>
+        </div>
+      </section>
+
+      <section class="panel panel-classroom" aria-labelledby="classroom-title">
+        <h2 id="classroom-title">3) Visuell klassrumslayout och aktuell placering</h2>
+        <p class="mode-info">Läge: Visa/hantera aktuell placering</p>
+
+        <div id="classroom-status" class="status" aria-live="polite"></div>
+        <div id="classroom-grid" class="classroom-grid" aria-label="Klassrumsplatser"></div>
+
+        <div class="panel-actions">
+          <button id="shuffle-btn" type="button">Slumpa placering</button>
+          <button id="clear-placement-btn" type="button">Rensa aktuell placering</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
