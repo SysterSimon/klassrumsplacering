@@ -7,95 +7,238 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="app">
-      <header class="app-header">
-        <h1>Simons placeringsgenerator</h1>
-        <p class="subtitle">Offlineverktyg för elevlista, regler och visuell placering.</p>
+    <main class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Offlineverktyg för klassrumsplacering</p>
+          <h1>Simons placeringsgenerator</h1>
+          <p class="hero-text">
+            Hantera standardlista, regler och placering i samma lokala app utan server.
+          </p>
+        </div>
+
+        <dl class="hero-stats" aria-label="Sammanfattning">
+          <div class="stat-card">
+            <dt>Platser</dt>
+            <dd>28</dd>
+          </div>
+          <div class="stat-card">
+            <dt>Block</dt>
+            <dd>4</dd>
+          </div>
+          <div class="stat-card">
+            <dt>Läge</dt>
+            <dd>Offline</dd>
+          </div>
+        </dl>
       </header>
 
-      <section class="panel" aria-labelledby="student-list-title">
-        <h2 id="student-list-title">1) Standardlista med elevnamn</h2>
-        <p class="mode-info">Läge: Redigera standardlista</p>
-        <form id="add-student-form" class="inline-form">
-          <label for="new-student-name">Nytt elevnamn</label>
-          <input id="new-student-name" name="name" type="text" required maxlength="80" />
-          <button type="submit">Lägg till elev</button>
-        </form>
-        <ul id="student-list" class="list"></ul>
-        <div class="panel-actions">
-          <button id="save-students-btn" type="button">Spara standardlista</button>
-        </div>
+      <section class="status-panel" aria-label="Systemstatus">
+        <div id="classroom-status" class="status status-neutral" aria-live="polite"></div>
       </section>
 
-      <section class="panel" aria-labelledby="rules-title">
-        <h2 id="rules-title">2) Regler och platsbegränsningar</h2>
-        <p class="mode-info">Läge: Redigera regler</p>
+      <div class="workspace">
+        <aside class="sidebar">
+          <section class="panel panel-tight" aria-labelledby="student-list-title">
+            <div class="panel-heading">
+              <div>
+                <p class="panel-step">Steg 1</p>
+                <h2 id="student-list-title">Standardlista</h2>
+              </div>
+              <span class="mode-badge">Redigera elevlista</span>
+            </div>
 
-        <form id="add-rule-form" class="inline-form">
-          <label for="rule-student-a">Elev A</label>
-          <select id="rule-student-a" required></select>
-          <label for="rule-student-b">Elev B</label>
-          <select id="rule-student-b" required></select>
-          <button type="submit">Lägg till sidregel</button>
-        </form>
-        <ul id="rules-list" class="list"></ul>
+            <form id="add-student-form" class="stack-form">
+              <label for="new-student-name">Nytt elevnamn</label>
+              <div class="inline-form">
+                <input id="new-student-name" name="name" type="text" required maxlength="80" placeholder="Skriv elevens namn" />
+                <button type="submit" class="button button-primary">Lägg till</button>
+              </div>
+            </form>
 
-        <hr />
+            <div class="section-meta">
+              <span id="student-count-text">0 elever</span>
+              <span id="attendance-count-text" class="helper-text"></span>
+            </div>
 
-        <form id="set-constraint-form" class="inline-form">
-          <label for="constraint-student">Elev</label>
-          <select id="constraint-student" required></select>
-          <label for="constraint-seats">Tillåtna platsnummer</label>
-          <select id="constraint-seats" multiple size="6" required></select>
-          <button type="submit">Spara platsbegränsning</button>
-        </form>
+            <div class="subpanel import-subpanel">
+              <h3>Import till standardlista</h3>
+              <div class="stack-form">
+                <label for="import-students-file">Välj .txt-fil</label>
+                <input id="import-students-file" type="file" accept=".txt,text/plain" />
+                <button id="import-students-btn" type="button" class="button button-secondary">Importera namn</button>
+                <p id="import-status" class="helper-text" aria-live="polite"></p>
+              </div>
+            </div>
 
-        <ul id="constraints-list" class="list"></ul>
+            <ul id="student-list" class="list"></ul>
 
-        <div class="panel-actions">
-          <button id="save-rules-btn" type="button">Spara regler och platsbegränsningar</button>
-        </div>
-      </section>
+            <div class="panel-actions">
+              <button id="save-students-btn" type="button" class="button button-secondary">Spara standardlista</button>
+              <button id="export-settings-btn" type="button" class="button button-secondary">Exportera inställningar</button>
+              <label class="button button-secondary file-button" for="import-settings-file">Välj inställningsfil</label>
+              <input id="import-settings-file" type="file" accept=".json,application/json" hidden />
+              <button id="import-settings-btn" type="button" class="button button-secondary">Importera inställningar</button>
+            </div>
+          </section>
+        </aside>
 
-      <section class="panel" aria-labelledby="classroom-title">
-        <h2 id="classroom-title">3) Klassrum och aktuell placering</h2>
-        <p class="mode-info">Läge: Visa/hantera aktuell placering</p>
+        <section class="panel classroom-panel" aria-labelledby="classroom-title">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-step">Steg 2</p>
+              <h2 id="classroom-title">Aktuell placering</h2>
+            </div>
+            <span class="mode-badge">Visa och slumpa</span>
+          </div>
 
-        <div id="classroom-status" class="status" aria-live="polite"></div>
+          <div class="legend" aria-label="Teckenförklaring">
+            <span class="legend-item"><span class="legend-swatch swatch-empty"></span>Tom plats</span>
+            <span class="legend-item"><span class="legend-swatch swatch-filled"></span>Upptagen plats</span>
+          </div>
 
-        <div class="classroom-layout" aria-label="Klassrumslayout">
-          <div class="teacher">[ LÄRARE ]</div>
+          <div class="classroom-layout" id="classroom-layout" aria-label="Klassrumslayout">
+            <div class="teacher-area">
+              <div class="teacher-board">Fram i klassrummet</div>
+              <div class="teacher">Lärare</div>
+            </div>
 
-          <div class="blocks-row">
-            <section class="seat-section" id="section-left">
-              <h3>Vänster block (01-09)</h3>
-              <div class="section-grid section-grid-3" id="left-block-grid"></div>
-            </section>
+            <div class="blocks-row">
+              <section class="seat-section" id="section-left" aria-labelledby="section-left-title">
+                <div class="section-header">
+                  <h3 id="section-left-title">Vänster block</h3>
+                  <span>01–09</span>
+                </div>
+                <div class="section-grid section-grid-3" id="left-block-grid"></div>
+              </section>
 
-            <section class="seat-section" id="section-middle">
-              <h3>Mittenblock (10-15)</h3>
-              <div class="section-grid section-grid-2" id="middle-block-grid"></div>
-            </section>
+              <section class="seat-section seat-section-middle" id="section-middle" aria-labelledby="section-middle-title">
+                <div class="section-header">
+                  <h3 id="section-middle-title">Mittenblock</h3>
+                  <span>10–15</span>
+                </div>
+                <div class="section-grid section-grid-2" id="middle-block-grid"></div>
+              </section>
 
-            <section class="seat-section" id="section-right">
-              <h3>Höger block (16-24)</h3>
-              <div class="section-grid section-grid-3" id="right-block-grid"></div>
+              <section class="seat-section" id="section-right" aria-labelledby="section-right-title">
+                <div class="section-header">
+                  <h3 id="section-right-title">Höger block</h3>
+                  <span>16–24</span>
+                </div>
+                <div class="section-grid section-grid-3" id="right-block-grid"></div>
+              </section>
+            </div>
+
+            <section class="seat-section back-row" aria-labelledby="section-back-title">
+              <div class="section-header">
+                <h3 id="section-back-title">Bakre rad</h3>
+                <span>25–28</span>
+              </div>
+              <div class="section-grid section-grid-4" id="back-row-grid"></div>
             </section>
           </div>
 
-          <section class="seat-section back-row">
-            <h3>Bakre rad (25-28)</h3>
-            <div class="section-grid section-grid-4" id="back-row-grid"></div>
-          </section>
-        </div>
+          <div class="panel-actions panel-actions-wide">
+            <button id="shuffle-btn" type="button" class="button button-primary">Starta slumpning</button>
+            <button id="clear-placement-btn" type="button" class="button button-secondary">Rensa aktuell placering</button>
+          </div>
+        </section>
+      </div>
 
-        <div class="panel-actions">
-          <button id="shuffle-btn" type="button">Starta slumpning</button>
-          <button id="clear-placement-btn" type="button">Rensa aktuell placering</button>
-        </div>
+      <section class="panel panel-tight rules-collapsible-panel" aria-labelledby="rules-title">
+        <details class="rules-details">
+          <summary class="rules-summary">
+            <span>Regler</span>
+            <span class="rules-summary-meta">Öppna för blockregler, tillåtna platser och mindre åtråvärda platser</span>
+          </summary>
+
+          <div class="rules-content">
+            <div class="panel-heading">
+              <div>
+                <p class="panel-step">Steg 3</p>
+                <h2 id="rules-title">Regler</h2>
+              </div>
+              <span class="mode-badge">Dold från start</span>
+            </div>
+
+            <div class="subpanel">
+              <h3>Elevpar i olika block och olika höjd</h3>
+              <p class="helper-text">Du kan välja en enskild elev eller Alla elever för att skapa flera regler på en gång.</p>
+              <form id="add-rule-form" class="stack-form">
+                <label for="rule-student-a">Elev A</label>
+                <select id="rule-student-a" required></select>
+
+                <label for="rule-student-b">Elev B</label>
+                <select id="rule-student-b" required></select>
+
+                <button type="submit" class="button button-secondary">Lägg till regel</button>
+              </form>
+              <ul id="rules-list" class="list compact-list"></ul>
+            </div>
+
+            <div class="subpanel">
+              <h3>Tillåtna platser</h3>
+              <p class="helper-text">Du kan välja en elev eller Alla elever.</p>
+              <form id="set-constraint-form" class="stack-form">
+                <label for="constraint-student">Elev</label>
+                <select id="constraint-student" required></select>
+
+                <label for="constraint-seats">Tillåtna platsnummer</label>
+                <p class="helper-text">Du kan välja flera platser för samma elev.</p>
+                <select id="constraint-seats" multiple size="8" required></select>
+
+                <button type="submit" class="button button-secondary">Spara tillåtna platser</button>
+              </form>
+              <ul id="constraints-list" class="list compact-list"></ul>
+            </div>
+
+            <div class="subpanel">
+              <h3>Mindre åtråvärda platser</h3>
+              <p class="helper-text">Du kan välja en elev eller Alla elever.</p>
+              <form id="set-avoid-form" class="stack-form">
+                <label for="avoid-student">Elev</label>
+                <select id="avoid-student" required></select>
+
+                <label for="avoid-seats">Platser att helst undvika</label>
+                <select id="avoid-seats" multiple size="8" required></select>
+
+                <button type="submit" class="button button-secondary">Spara mindre åtråvärda platser</button>
+              </form>
+              <ul id="avoid-list" class="list compact-list"></ul>
+            </div>
+
+            <div class="panel-actions">
+              <button id="save-rules-btn" type="button" class="button button-secondary">Spara regler</button>
+            </div>
+          </div>
+        </details>
       </section>
     </main>
 
-    <script type="module" src="app.js"></script>
+    <div id="shuffle-overlay" class="shuffle-overlay hidden" aria-live="polite" aria-hidden="true">
+      <div class="shuffle-dialog">
+        <p class="shuffle-label">Simons placeringsgenerator</p>
+        <div id="shuffle-overlay-body"></div>
+      </div>
+    </div>
+
+    <div id="map-modal" class="map-modal hidden" aria-hidden="true">
+      <div class="map-modal-dialog">
+        <div class="map-modal-header">
+          <div>
+            <p class="panel-step">Slumpning klar</p>
+            <h2>Placeringskarta</h2>
+          </div>
+          <button id="close-map-modal-btn" type="button" class="button button-secondary">Stäng</button>
+        </div>
+        <div id="map-modal-body" class="map-modal-body"></div>
+      </div>
+    </div>
+
+    <template id="empty-list-template">
+      <li class="empty-state"></li>
+    </template>
+
+    <script src="app.js"></script>
   </body>
 </html>
